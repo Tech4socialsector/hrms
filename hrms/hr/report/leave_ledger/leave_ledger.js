@@ -89,6 +89,9 @@ frappe.query_reports["Leave Ledger"] = {
 			return;
 
 		const today = frappe.datetime.now_date();
+		const company = frappe.defaults.get_user_default("Company");
+
+		if (!company) return;
 
 		frappe.call({
 			type: "GET",
@@ -96,10 +99,11 @@ frappe.query_reports["Leave Ledger"] = {
 			args: {
 				from_date: today,
 				to_date: today,
-				company: frappe.defaults.get_user_default("Company"),
+				company: company,
 			},
 			freeze: true,
 			callback: (data) => {
+				if (!data.message || !data.message.length) return;
 				frappe.query_report.set_filter_value("from_date", data.message[0].from_date);
 				frappe.query_report.set_filter_value("to_date", data.message[0].to_date);
 			},
