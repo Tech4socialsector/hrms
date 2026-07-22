@@ -85,14 +85,28 @@ $.extend(hrms, {
 		frm.set_df_property("quick_filters_section", "collapsible", 0);
 		frm.set_df_property("advanced_filters_section", "collapsible", 0);
 
+		const update_selected_count = () => {
+			if (!frm.employees_datatable || !frm.employees_count_label) return;
+			const checked = frm.employees_datatable.rowmanager.getCheckedRows().length;
+			const total = frm.employees_datatable.datamanager.data.length;
+			frm.employees_count_label.text(
+				checked ? __("{0} of {1} selected", [checked, total]) : __("{0} employee(s)", [total]),
+			);
+		};
+
 		if (frm.employees_datatable) {
 			frm.employees_datatable.rowmanager.checkMap = [];
 			frm.employees_datatable.options.noDataMessage = no_data_message;
 			frm.employees_datatable.refresh(employees, columns);
+			update_selected_count();
 			return;
 		}
 
 		const $wrapper = frm.get_field("employees_html").$wrapper;
+		$wrapper.empty();
+		frm.employees_count_label = $(`<div class="employee-count-label text-muted">`).appendTo(
+			$wrapper,
+		);
 		const employee_wrapper = $(`<div class="employee_wrapper">`).appendTo($wrapper);
 		const datatable_options = {
 			columns: columns,
@@ -107,9 +121,16 @@ $.extend(hrms, {
 			noDataMessage: no_data_message,
 			disableReorderColumn: true,
 			getEditor: get_editor,
-			events: events,
+			events: {
+				...events,
+				onCheckRow: (...args) => {
+					update_selected_count();
+					if (events.onCheckRow) events.onCheckRow(...args);
+				},
+			},
 		};
 		frm.employees_datatable = new frappe.DataTable(employee_wrapper.get(0), datatable_options);
+		update_selected_count();
 	},
 
 	handle_realtime_bulk_action_notification: (frm, event, doctype) => {
