@@ -43,25 +43,25 @@ const tabItems = [
 		title: __("Home"),
 		route: "/home",
 	},
-	{
-		icon: AttendanceIcon,
-		title: __("Attendance"),
-		route: "/dashboard/attendance",
-	},
+	// {
+	// 	icon: AttendanceIcon,
+	// 	title: __("Attendance"),
+	// 	route: "/dashboard/attendance",
+	// },
 	{
 		icon: LeaveIcon,
 		title: __("Leaves"),
 		route: "/dashboard/leaves",
 	},
-	{
-		icon: ExpenseIcon,
-		title: __("Expenses"),
-		route: "/dashboard/expense-claims",
-	},
-	{
-		icon: SalaryIcon,
-		title: __("Salary"),
-		route: "/dashboard/salary-slips",
-	},
+	// {
+	// 	icon: ExpenseIcon,
+	// 	title: __("Expenses"),
+	// 	route: "/dashboard/expense-claims",
+	// },
+	// {
+	// 	icon: SalaryIcon,
+	// 	title: __("Salary"),
+	// 	route: "/dashboard/salary-slips",
+	// },
 ]
 </script>
