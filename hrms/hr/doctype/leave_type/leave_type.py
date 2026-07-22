@@ -56,7 +56,7 @@ class LeaveType(Document):
 		if (
 			old_configuration
 			and old_configuration.is_earned_leave
-			and old_configuration.max_leaves_allowed > self.max_leaves_allowed
+			and (old_configuration.max_leaves_allowed or 0) > (self.max_leaves_allowed or 0)
 		):
 			earned_leave_allocation_exists = frappe.db.exists(
 				"Leave Allocation",

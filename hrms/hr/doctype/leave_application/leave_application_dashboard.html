@@ -1,6 +1,54 @@
 
 {% if not jQuery.isEmptyObject(data) %}
-<table class="table table-bordered small">
+<style>
+	.leave-balance-table {
+		border-collapse: separate;
+		border-spacing: 0;
+		border: 1px solid var(--border-color);
+		border-radius: var(--border-radius-md, 6px);
+		overflow: hidden;
+	}
+	.leave-balance-table thead th {
+		background-color: var(--bg-light-gray);
+		color: var(--text-muted);
+		font-weight: 600;
+		text-transform: uppercase;
+		font-size: 11px;
+		letter-spacing: 0.02em;
+		border-bottom: 1px solid var(--border-color);
+		padding: 10px 12px;
+	}
+	.leave-balance-table tbody td {
+		padding: 10px 12px;
+		border-bottom: 1px solid var(--border-color);
+	}
+	.leave-balance-table tbody tr:last-child td {
+		border-bottom: none;
+	}
+	.leave-balance-table tbody tr:nth-child(even) {
+		background-color: var(--bg-light-gray);
+	}
+	.leave-balance-table tbody tr:hover {
+		background-color: var(--awesomplete-hover-bg, var(--bg-light-gray));
+	}
+	.leave-balance-table .available-pill {
+		display: inline-block;
+		min-width: 32px;
+		padding: 2px 8px;
+		border-radius: 999px;
+		font-weight: 600;
+		text-align: center;
+	}
+	.leave-balance-table .available-pill.positive {
+		background-color: var(--bg-green);
+		color: var(--text-on-green, var(--green-700));
+	}
+	.leave-balance-table .available-pill.negative {
+		background-color: var(--bg-red);
+		color: var(--text-on-red, var(--red-700));
+	}
+</style>
+<table class="table leave-balance-table small">
 	<thead>
 		<tr>
 			<th style="width: 16%">{{ __("Leave Type") }}</th>
@@ -13,14 +61,18 @@
 	</thead>
 	<tbody>
 		{% for(const [key, value] of Object.entries(data)) { %}
-			{% let color = cint(value["remaining_leaves"]) > 0 ? "green" : "red" %}
+			{% let is_positive = cint(value["remaining_leaves"]) > 0 %}
 			<tr>
-				<td> {%= key %} </td>
+				<td><strong>{%= key %}</strong></td>
 				<td class="text-right"> {%= value["total_leaves"] %} </td>
 				<td class="text-right"> {%= value["expired_leaves"] %} </td>
 				<td class="text-right"> {%= value["leaves_taken"] %} </td>
 				<td class="text-right"> {%= value["leaves_pending_approval"] %} </td>
-				<td class="text-right" style="color: {{ color }}"> {%= value["remaining_leaves"] %} </td>
+				<td class="text-right">
+					<span class="available-pill {{ is_positive ? "positive" : "negative" }}">
+						{%= value["remaining_leaves"] %}
+					</span>
+				</td>
 			</tr>
 		{% } %}
 	</tbody>
