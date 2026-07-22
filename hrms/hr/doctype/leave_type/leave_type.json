@@ -169,7 +169,7 @@
    "fieldname": "rounding",
    "fieldtype": "Select",
    "label": "Rounding",
-   "options": "\n0.25\n0.5\n1.0"
+   "options": "\n0.25\n0.5\n1.0\n1.5"
   },
   {
    "depends_on": "is_carry_forward",
