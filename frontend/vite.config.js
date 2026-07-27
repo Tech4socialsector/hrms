@@ -24,9 +24,9 @@ export default defineConfig({
 			},
 			manifest: {
 				display: "standalone",
-				name: "Frappe HR",
-				short_name: "Frappe HR",
-				start_url: "/hrms",
+				name: "Pathways",
+				short_name: "Pathways",
+				start_url: "/pathways",
 				description: "Everyday HR & Payroll operations at your fingertips",
 				theme_color: "#ffffff",
 				icons: [
