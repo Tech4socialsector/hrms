@@ -26,7 +26,7 @@ export default defineConfig({
 				display: "standalone",
 				name: "Pathways",
 				short_name: "Pathways",
-				start_url: "/pathways",
+				start_url: "/hrms",
 				description: "Everyday HR & Payroll operations at your fingertips",
 				theme_color: "#ffffff",
 				icons: [
