@@ -5,16 +5,16 @@ app_description = "Modern HR and Payroll Software"
 app_email = "contact@frappe.io"
 app_license = "GNU General Public License (v3)"
 required_apps = ["frappe/erpnext"]
-source_link = "http://github.com/frappe/hrms"
-app_logo_url = "/assets/hrms/manifest/manifest-icon-512.maskable.png"
-app_home = "/desk/people"
+source_link = "http://github.com/frappe/app/hr-setup"
+app_logo_url = "/assets/app/hr-setup/manifest/manifest-icon-512.maskable.png"
+app_home = "/app/hr-setup"
 
 add_to_apps_screen = [
 	{
 		"name": "hrms",
-		"logo": "/assets/hrms/manifest/manifest-icon-512.maskable.png",
+		"logo": "/assets/app/hr-setup/manifest/manifest-icon-512.maskable.png",
 		"title": "Pathways",
-		"route": "/desk/people",
+		"route": "/app/hr-setup",
 		"has_permission": "hrms.hr.utils.check_app_permission",
 	}
 ]
@@ -23,7 +23,7 @@ add_to_apps_screen = [
 # ------------------
 
 # include js, css files in header of desk.html
-# app_include_css = "/assets/hrms/css/hrms.css"
+# app_include_css = "/assets/app/hr-setup/css/app/hr-setup.css"
 app_include_js = [
 	"hrms.bundle.js",
 ]
@@ -32,8 +32,8 @@ app_include_css = "hrms.bundle.css"
 # website
 
 # include js, css files in header of web template
-# web_include_css = "/assets/hrms/css/hrms.css"
-# web_include_js = "/assets/hrms/js/hrms.js"
+# web_include_css = "/assets/app/hr-setup/css/app/hr-setup.css"
+# web_include_js = "/assets/app/hr-setup/js/app/hr-setup.js"
 
 # include custom scss in every website theme (without file extension ".scss")
 # website_theme_scss = "hrms/public/scss/website"
@@ -80,7 +80,7 @@ calendars = ["Leave Application"]
 website_generators = ["Job Opening"]
 
 website_route_rules = [
-	{"from_route": "/hrms/<path:app_path>", "to_route": "hrms"},
+	{"from_route": "/app/hr-setup/<path:app_path>", "to_route": "hrms"},
 	{"from_route": "/hr/<path:app_path>", "to_route": "roster"},
 ]
 # Jinja
