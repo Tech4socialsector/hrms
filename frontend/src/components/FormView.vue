@@ -386,7 +386,12 @@ const props = defineProps({
 		default: false,
 	},
 })
-const emit = defineEmits(["validateForm", "update:modelValue", "formReloaded"])
+const emit = defineEmits([
+	"validateForm",
+	"update:modelValue",
+	"formReloaded",
+	"inserted",
+])
 const router = useRouter()
 const { downloadPDF } = useDownloadPDF()
 
@@ -531,6 +536,7 @@ const docList = createListResource({
 				iconClasses: "text-green-500",
 			})
 			await uploadAllAttachments(data.doctype, data.name, fileAttachments.value)
+			emit("inserted", data)
 
 			router.replace({
 				name: `${props.doctype.replace(/\s+/g, "")}DetailView`,

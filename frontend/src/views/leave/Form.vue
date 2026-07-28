@@ -3,6 +3,7 @@
 		<ion-content :fullscreen="true">
 			<FormView
 				v-if="formFields.data"
+				:key="props.id || 'new'"
 				doctype="Leave Application"
 				v-model="leaveApplication"
 				:isSubmittable="true"
@@ -10,6 +11,7 @@
 				:id="props.id"
 				:showAttachmentView="true"
 				@validateForm="validateForm"
+				@inserted="myLeaves.reload()"
 			/>
 		</ion-content>
 	</ion-page>
@@ -21,6 +23,7 @@ import { createResource } from "frappe-ui"
 import { ref, watch, inject, nextTick } from "vue"
 
 import FormView from "@/components/FormView.vue"
+import { myLeaves } from "@/data/leaves"
 
 const dayjs = inject("$dayjs")
 const __ = inject("$translate")
