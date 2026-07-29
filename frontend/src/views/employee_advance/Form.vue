@@ -1,8 +1,9 @@
 <template>
-	<ion-page>
+	<ion-page :key="props.id || 'new'">
 		<ion-content :fullscreen="true">
 			<FormView
 				v-if="formFields.data"
+				:key="props.id || 'new'"
 				doctype="Employee Advance"
 				v-model="employeeAdvance"
 				:isSubmittable="true"

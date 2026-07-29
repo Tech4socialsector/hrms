@@ -108,6 +108,12 @@ router.isReady().then(async () => {
 	await translationsPlugin.isReady();
 	registerServiceWorker()
 	app.mount("#app")
+}).catch((error) => {
+	// if the initial navigation guard rejects (e.g. a transient network
+	// error while fetching session/employee data), router.isReady() never
+	// resolves and app.mount() is skipped, leaving a permanent blank page.
+	console.error("Failed to resolve initial route", error)
+	app.mount("#app")
 })
 
 router.beforeEach(async (to, _, next) => {
@@ -129,7 +135,13 @@ router.beforeEach(async (to, _, next) => {
 	}
 
 	if (isLoggedIn && to.name !== "InvalidEmployee") {
-		await employeeResource.promise
+		try {
+			await employeeResource.promise
+		} catch (error) {
+			// error is already handled by employeeResource's own onError
+			// (redirects to /login on auth errors); swallow it here so a
+			// rejection doesn't propagate through the router guard chain
+		}
 		// user should be an employee to access the app
 		// since all views are employee specific
 		if (

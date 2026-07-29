@@ -41,8 +41,7 @@ export const session = reactive({
 			employeeResource.reset()
 
 			session.user = sessionUser()
-			router.replace({ name: "Login" })
-			window.location.reload()
+			window.location.href = "/hrms/login"
 		},
 	}),
 	user: sessionUser(),

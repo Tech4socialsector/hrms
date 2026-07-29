@@ -1,5 +1,5 @@
 <template>
-	<ion-page>
+	<ion-page :key="props.id || 'new'">
 		<ion-content :fullscreen="true">
 			<FormView
 				v-if="formFields.data"

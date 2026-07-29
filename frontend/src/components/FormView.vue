@@ -397,6 +397,17 @@ const { downloadPDF } = useDownloadPDF()
 
 const __ = inject("$translate")
 
+// frappe-ui's resourceFetcher invokes a resource's onError callback multiple
+// times per failed request (in transformResponse, transformError, and
+// handleError). Route error toasts through this so only one is ever shown.
+let lastErrorToastAt = 0
+function showErrorToast(options) {
+	const now = Date.now()
+	if (now - lastErrorToastAt < 300) return
+	lastErrorToastAt = now
+	toast(options)
+}
+
 let activeTab = ref(props.tabs?.[0].name)
 let fileAttachments = ref([])
 let statusColor = ref("")
@@ -544,7 +555,7 @@ const docList = createListResource({
 			})
 		},
 		onError() {
-			toast({
+			showErrorToast({
 				title: __("Error"),
 				text: __("Error creating {0}", [__(props.doctype)]),
 				icon: "alert-circle",
@@ -570,7 +581,7 @@ const documentResource = createDocumentResource({
 			})
 		},
 		onError() {
-			toast({
+			showErrorToast({
 				title: __("Error"),
 				text: __("Error updating {0}", [__(props.doctype)]),
 				icon: "alert-circle",
@@ -592,7 +603,7 @@ const documentResource = createDocumentResource({
 			})
 		},
 		onError() {
-			toast({
+			showErrorToast({
 				title: __("Error"),
 				text: __("Error deleting {0}", [__(props.doctype)]),
 				icon: "alert-circle",
