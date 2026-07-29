@@ -17,26 +17,29 @@
 		</div>
 
 		<!-- Leave Balance Dashboard -->
-		<div
-			class="flex flex-row gap-4 overflow-x-auto py-2 mt-3"
-			v-if="leaveBalance.data"
-		>
-			<div
-				v-for="(allocation, leave_type, index) in leaveBalance.data"
-				:key="leave_type"
-				class="flex flex-col bg-white border-none rounded-lg drop-shadow-md gap-2 p-4 items-start first:ml-4"
-			>
-				<SemicircleChart
-					:percentage="allocation.balance_percentage"
-					:colorClass="getChartColor(index)"
-				/>
-				<div class="text-gray-800 font-bold text-base">
-					{{ `${allocation.balance_leaves}/${allocation.allocated_leaves}` }}
+		<div class="relative" v-if="leaveBalance.data">
+			<div class="flex flex-row gap-4 overflow-x-auto py-2 mt-3">
+				<div
+					v-for="(allocation, leave_type, index) in leaveBalance.data"
+					:key="leave_type"
+					class="flex flex-col bg-white border-none rounded-lg drop-shadow-md gap-2 p-4 items-start first:ml-4"
+				>
+					<SemicircleChart
+						:percentage="allocation.balance_percentage"
+						:colorClass="getChartColor(index)"
+					/>
+					<div class="text-gray-800 font-bold text-base">
+						{{ `${allocation.balance_leaves}/${allocation.allocated_leaves}` }}
+					</div>
+					<div class="text-gray-600 font-normal text-sm w-24 leading-4">
+						{{ __("{0} balance", [__(leave_type, null, "Leave Type")]) }}
+					</div>
 				</div>
-				<div class="text-gray-600 font-normal text-sm w-24 leading-4">
-					{{ __("{0} balance", [__(leave_type, null, "Leave Type")]) }}
-				</div>
+				<div class="shrink-0 w-px"></div>
 			</div>
+			<div
+				class="pointer-events-none absolute right-0 top-0 h-full w-10 bg-gradient-to-l from-white to-transparent"
+			></div>
 		</div>
 
 		<EmptyState :message="__('You have no leaves allocated')" v-else />

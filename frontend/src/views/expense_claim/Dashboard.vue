@@ -1,7 +1,7 @@
 <template>
-	<BaseLayout :pageTitle="__('Expense Claims')">
+	<BaseLayout :pageTitle="__('Expense Claims')" @refresh="handleRefresh">
 		<template #body>
-			<div class="flex flex-col mt-7 mb-7 p-4 gap-7">
+			<div class="flex flex-col mt-2 mb-7 p-4 gap-7">
 				<ExpenseClaimSummary />
 
 				<div class="w-full">
@@ -60,4 +60,9 @@ import EmployeeAdvanceBalance from "@/components/EmployeeAdvanceBalance.vue"
 
 import { myClaims } from "@/data/claims"
 import { advanceBalance } from "@/data/advances"
+
+const handleRefresh = async (done) => {
+	await Promise.all([myClaims.reload(), advanceBalance.reload()])
+	done()
+}
 </script>

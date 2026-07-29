@@ -1,7 +1,7 @@
 <template>
-	<BaseLayout>
+	<BaseLayout @refresh="handleRefresh">
 		<template #body>
-			<div class="flex flex-col items-center my-7 p-4 gap-7">
+			<div class="flex flex-col items-center mt-2 mb-5 p-4 gap-6">
 				<!-- <CheckInPanel /> -->
 				<!-- <QuickLinks :items="quickLinks" :title="__('Quick Links')" /> -->
 				<!-- <RequestPanel /> -->
@@ -12,8 +12,8 @@
 					</h2>
 				</div>
 
-				<LeaveSummaryCards />
 				<LeaveQuickActions />
+				<LeaveSummaryCards />
 				<LeaveBalanceList />
 
 				<div class="flex flex-col gap-3 w-full">
@@ -52,9 +52,14 @@ import LeaveQuickActions from "@/components/LeaveQuickActions.vue"
 import LeaveBalanceList from "@/components/LeaveBalanceList.vue"
 import RequestList from "@/components/RequestList.vue"
 import LeaveRequestItem from "@/components/LeaveRequestItem.vue"
-import { myLeaves } from "@/data/leaves"
+import { myLeaves, leaveBalance } from "@/data/leaves"
 
 const __ = inject("$translate")
+
+const handleRefresh = async (done) => {
+	await Promise.all([myLeaves.reload(), leaveBalance.reload()])
+	done()
+}
 const employee = inject("$employee")
 const dayjs = inject("$dayjs")
 

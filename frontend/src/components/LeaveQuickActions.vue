@@ -1,24 +1,39 @@
 <template>
 	<div class="flex flex-col gap-3 w-full">
 		<div class="text-lg font-medium text-gray-900">{{ __("Quick Actions") }}</div>
-		<div class="flex flex-col bg-white rounded-lg">
+		<div class="flex flex-col gap-3">
 			<router-link
-				class="flex flex-row items-center justify-between p-4"
-				:class="action !== actions[actions.length - 1] && 'border-b'"
-				v-for="action in actions"
+				v-for="(action, index) in actions"
 				:key="action.title"
 				:to="{ name: action.route }"
+				class="flex flex-row items-center gap-3 rounded-lg py-4 px-4"
+				:class="
+					index === 0
+						? 'bg-gray-900 text-white'
+						: 'bg-white text-gray-900 border border-gray-200'
+				"
 			>
-				<div class="flex flex-row items-center gap-3 grow">
-					<div class="flex items-center justify-center h-9 w-9 rounded-full bg-green-100">
-						<FeatherIcon :name="action.icon" class="h-4 w-4 text-green-600" />
-					</div>
-					<div class="flex flex-col">
-						<div class="text-base font-normal text-gray-800">{{ action.title }}</div>
-						<div class="text-xs text-gray-500">{{ action.subtitle }}</div>
+				<div
+					class="flex items-center justify-center h-9 w-9 rounded-full shrink-0"
+					:class="index === 0 ? 'bg-white/15' : 'bg-gray-100'"
+				>
+					<FeatherIcon
+						:name="action.icon"
+						class="h-4 w-4"
+						:class="index === 0 ? 'text-white' : 'text-gray-800'"
+					/>
+				</div>
+				<div class="flex flex-col grow">
+					<div class="text-base font-medium">{{ action.title }}</div>
+					<div class="text-xs" :class="index === 0 ? 'text-white/70' : 'text-gray-500'">
+						{{ action.subtitle }}
 					</div>
 				</div>
-				<FeatherIcon name="chevron-right" class="h-5 w-5 text-gray-500" />
+				<FeatherIcon
+					name="chevron-right"
+					class="h-5 w-5 shrink-0"
+					:class="index === 0 ? 'text-white/70' : 'text-gray-500'"
+				/>
 			</router-link>
 		</div>
 	</div>

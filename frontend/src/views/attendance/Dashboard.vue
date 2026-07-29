@@ -1,7 +1,7 @@
 <template>
-	<BaseLayout pageTitle="Attendance">
+	<BaseLayout pageTitle="Attendance" @refresh="handleRefresh">
 		<template #body>
-			<div class="flex flex-col mt-7 mb-7 p-4 gap-7">
+			<div class="flex flex-col mt-2 mb-7 p-4 gap-7">
 				<AttendanceCalendar />
 				<div class="w-full">
 					<router-link :to="{ name: 'AttendanceRequestFormView' }" v-slot="{ navigate }">
@@ -93,4 +93,13 @@ const upcomingShifts = computed(() => {
 	// show only 5 upcoming shifts
 	return filteredShifts?.slice(0, 5)
 })
+
+const handleRefresh = async (done) => {
+	await Promise.all([
+		shifts.reload(),
+		myAttendanceRequests.reload(),
+		myShiftRequests.reload(),
+	])
+	done()
+}
 </script>

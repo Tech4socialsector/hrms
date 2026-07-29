@@ -1,7 +1,7 @@
 <template>
-	<BaseLayout :pageTitle="__('Salary Slips')">
+	<BaseLayout :pageTitle="__('Salary Slips')" @refresh="handleRefresh">
 		<template #body>
-			<div class="flex flex-col items-center my-7 p-4">
+			<div class="flex flex-col items-center mt-2 mb-7 p-4">
 				<div class="flex flex-col w-full bg-white rounded py-5 px-3.5 gap-5">
 					<div v-if="lastSalarySlip && lastSalarySlip.year_to_date" class="flex flex-col w-full gap-1.5">
 						<span class="text-gray-600 text-sm font-medium leading-5">
@@ -143,4 +143,9 @@ onMounted(() => {
 onBeforeUnmount(() => {
 	socket.off("hrms:update_salary_slips")
 })
+
+const handleRefresh = async (done) => {
+	await Promise.all([payrollPeriods.reload(), documents.reload()])
+	done()
+}
 </script>

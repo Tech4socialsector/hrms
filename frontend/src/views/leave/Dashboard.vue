@@ -1,7 +1,7 @@
 <template>
-	<BaseLayout :pageTitle="__('Leaves & Holidays')">
+	<BaseLayout :pageTitle="__('Leaves & Holidays')" @refresh="handleRefresh">
 		<template #body>
-			<div class="flex flex-col items-center mt-7 mb-7 py-4">
+			<div class="flex flex-col items-center mt-2 mb-7 py-4">
 				<LeaveBalance />
 
 				<div class="flex flex-col gap-7 mt-5 px-4 w-full">
@@ -42,5 +42,10 @@ import RequestList from "@/components/RequestList.vue"
 import LeaveRequestItem from "@/components/LeaveRequestItem.vue"
 import Holidays from "@/components/Holidays.vue"
 
-import { myLeaves } from "@/data/leaves"
+import { myLeaves, leaveBalance } from "@/data/leaves"
+
+const handleRefresh = async (done) => {
+	await Promise.all([myLeaves.reload(), leaveBalance.reload()])
+	done()
+}
 </script>

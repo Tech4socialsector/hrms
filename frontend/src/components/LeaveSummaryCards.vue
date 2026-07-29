@@ -1,21 +1,22 @@
 <template>
 	<div class="flex flex-col gap-3 w-full">
 		<div class="text-lg font-medium text-gray-900">{{ __("My Leave Summary") }}</div>
-		<div class="grid grid-cols-2 gap-3">
+		<div class="grid grid-cols-2 gap-2.5">
 			<div
 				v-for="card in cards"
 				:key="card.title"
-				class="flex flex-col bg-white rounded-lg p-4 gap-2"
+				class="flex flex-row items-center gap-2 bg-white rounded-lg p-2.5"
 			>
 				<div
-					class="flex items-center justify-center h-8 w-8 rounded"
+					class="flex items-center justify-center h-8 w-8 rounded shrink-0"
 					:class="card.iconBg"
 				>
 					<FeatherIcon :name="card.icon" class="h-4 w-4" :class="card.iconColor" />
 				</div>
-				<div class="text-xs text-gray-600">{{ card.title }}</div>
-				<div class="text-xl font-bold text-gray-900">{{ card.value }}</div>
-				<div class="text-xs text-gray-500">{{ card.subtitle }}</div>
+				<div class="flex flex-col min-w-0">
+					<div class="text-base font-bold text-gray-900 leading-tight">{{ card.value }}</div>
+					<div class="text-[11px] text-gray-500 leading-tight truncate">{{ card.title }}</div>
+				</div>
 			</div>
 		</div>
 	</div>
