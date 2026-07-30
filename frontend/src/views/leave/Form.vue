@@ -1,6 +1,7 @@
 <template>
 	<ion-page :key="props.id || 'new'">
 		<ion-content :fullscreen="true">
+			<!-- :showAttachmentView="true" -->
 			<FormView
 				v-if="formFields.data"
 				:key="props.id || 'new'"
@@ -9,7 +10,6 @@
 				:isSubmittable="true"
 				:fields="formFields.data"
 				:id="props.id"
-				:showAttachmentView="true"
 				@validateForm="validateForm"
 				@inserted="myLeaves.reload()"
 			/>
@@ -42,6 +42,10 @@ const currEmployee = ref(sessionEmployee.data.name)
 // reactive object to store form data
 const leaveApplication = ref({})
 
+// caches the last-fetched leave approval details so the default approver
+// can be re-applied after an existing doc finishes loading (see below)
+const lastApprovalDetails = ref(null)
+
 // For existing docs, watchers fire during initial data population from the DB.
 // This flag prevents setLeaveBalance() from overwriting the stored
 // "leave balance before application" value during that initial load.
@@ -53,6 +57,13 @@ if (props.id) {
 			if (name && !isFormInitialized.value) {
 				nextTick(() => {
 					isFormInitialized.value = true
+					// FormView's onMounted replaces the whole form model from the
+					// fetched doc after this component's own resources resolve, which
+					// can clobber the leave_approver default applied earlier. Re-apply
+					// it now that the doc load has settled.
+					if (lastApprovalDetails.value) {
+						setLeaveApprovers(lastApprovalDetails.value)
+					}
 				})
 			}
 		}
@@ -85,6 +96,7 @@ const leaveApprovalDetails = createResource({
 	url: "hrms.api.get_leave_approval_details",
 	params: { employee: currEmployee.value },
 	onSuccess(data) {
+		lastApprovalDetails.value = data
 		setLeaveApprovers(data)
 	},
 })
@@ -284,7 +296,12 @@ function setLeaveApprovers(data) {
 		leaveApplication.value.leave_approver = data?.leave_approver
 		leaveApplication.value.leave_approver_name = data?.leave_approver_name
 	}
-	
+
+	// let the employee know the field was pre-filled for them, since
+	// it's still editable (departments can have more than one approver)
+	leave_approver.description = data?.leave_approver
+		? __("Auto-assigned based on your department — tap to change")
+		: ""
 }
 
 function setLeaveTypes(data) {

@@ -109,6 +109,7 @@
 									:reqd="Boolean(field.reqd)"
 									:hidden="Boolean(field.hidden)"
 									:errorMessage="field.error_message"
+									:description="field.description"
 									:minDate="field.minDate"
 									:maxDate="field.maxDate"
 									:addSectionPadding="fieldList[0].name !== field.name"
@@ -150,6 +151,7 @@
 						:reqd="Boolean(field.reqd)"
 						:hidden="Boolean(field.hidden)"
 						:errorMessage="field.error_message"
+						:description="field.description"
 						:minDate="field.minDate"
 						:maxDate="field.maxDate"
 					/>

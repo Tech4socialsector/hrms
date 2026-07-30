@@ -145,6 +145,10 @@
 			:disabled="isReadOnly"
 		/>
 
+		<span v-if="props.description" class="text-xs text-gray-500">
+			{{ props.description }}
+		</span>
+
 		<ErrorMessage :message="props.errorMessage" />
 	</div>
 </template>
@@ -173,6 +177,7 @@ const props = defineProps({
 		default: false,
 	},
 	errorMessage: String,
+	description: String,
 	minDate: String,
 	maxDate: String,
 	addSectionPadding: {

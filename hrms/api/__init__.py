@@ -448,7 +448,6 @@ def get_leave_approval_details(employee: str) -> dict:
 	)
 
 	if not leave_approver and department:
-		frappe.has_permission("Department", "read", department, throw=True)
 		leave_approver = frappe.db.get_value(
 			"Department Approver",
 			{"parent": department, "parentfield": "leave_approvers", "idx": 1},
