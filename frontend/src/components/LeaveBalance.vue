@@ -62,6 +62,8 @@
 		</div>
 
 		<EmptyState :message="__('You have no leaves allocated')" v-else />
+
+		<LeaveAdjustments />
 	</div>
 </template>
 
@@ -69,6 +71,7 @@
 import { computed, inject } from "vue"
 import { FeatherIcon } from "frappe-ui"
 
+import LeaveAdjustments from "@/components/LeaveAdjustments.vue"
 import { leaveBalance, myLeaves } from "@/data/leaves"
 
 const __ = inject("$translate")

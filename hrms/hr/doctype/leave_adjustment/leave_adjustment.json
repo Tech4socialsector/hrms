@@ -162,6 +162,13 @@
  "owner": "Administrator",
  "permissions": [
   {
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Employee",
+   "share": 1
+  },
+  {
    "cancel": 1,
    "create": 1,
    "delete": 1,

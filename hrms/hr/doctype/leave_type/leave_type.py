@@ -22,7 +22,7 @@ class LeaveType(Document):
 		allow_negative: DF.Check
 		allow_over_allocation: DF.Check
 		applicable_after: DF.Int
-		applicable_to_gender: DF.Link
+		applicable_to_gender: DF.Link | None
 		earned_leave_frequency: DF.Literal["Monthly", "Quarterly", "Half-Yearly", "Yearly"]
 		earning_component: DF.Link | None
 		expire_carry_forwarded_leaves_after_days: DF.Int

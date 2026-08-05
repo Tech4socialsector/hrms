@@ -417,6 +417,31 @@ def get_leave_balance_map() -> dict[str, dict[str, float]]:
 
 
 @frappe.whitelist()
+def get_leave_adjustments() -> list[dict]:
+	"""
+	Returns submitted leave adjustments for the logged-in employee.
+	Row visibility is enforced by the "Leave Adjustment" doctype's own
+	permissions (Employee role, read-only) combined with the standard
+	User Permission on "Employee" — no manual employee filter is needed,
+	and none is trusted from the client.
+	"""
+	return frappe.get_list(
+		"Leave Adjustment",
+		filters={"docstatus": 1},
+		fields=[
+			"name",
+			"leave_type",
+			"adjustment_type",
+			"leaves_to_adjust",
+			"leaves_after_adjustment",
+			"posting_date",
+		],
+		order_by="posting_date desc, creation desc",
+		limit=100,
+	)
+
+
+@frappe.whitelist()
 def get_holidays_for_employee(employee: str) -> list[dict]:
 	holiday_list = get_holiday_list_for_employee(employee, raise_exception=False)
 	if not holiday_list:

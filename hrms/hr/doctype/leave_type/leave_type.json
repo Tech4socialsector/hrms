@@ -74,8 +74,7 @@
    "fieldname": "applicable_to_gender",
    "fieldtype": "Link",
    "label": "Applicable to Gender",
-   "options": "Gender",
-   "reqd": 1
+   "options": "Gender"
   },
   {
    "fieldname": "column_break_3",
@@ -244,7 +243,7 @@
  "icon": "fa fa-flag",
  "idx": 1,
  "links": [],
- "modified": "2026-08-05 10:38:33.821650",
+ "modified": "2026-08-05 11:04:16.477323",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Leave Type",

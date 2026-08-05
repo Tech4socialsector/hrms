@@ -66,3 +66,9 @@ export const leaveBalance = createResource({
 		)
 	},
 })
+
+export const leaveAdjustments = createResource({
+	url: "hrms.api.get_leave_adjustments",
+	auto: true,
+	cache: "hrms:leave_adjustments",
+})
