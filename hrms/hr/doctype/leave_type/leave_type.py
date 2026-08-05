@@ -40,7 +40,7 @@ class LeaveType(Document):
 		max_leaves_allowed: DF.Float
 		maximum_carry_forwarded_leaves: DF.Float
 		non_encashable_leaves: DF.Int
-		rounding: DF.Literal["", "0.25", "0.5", "1.0", "1.5"]
+		rounding: DF.Literal["", "1.0", "1.5"]
 	# end: auto-generated types
 
 	def validate(self):
