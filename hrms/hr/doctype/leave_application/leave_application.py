@@ -960,7 +960,13 @@ def get_leave_details(employee: str, date: str | datetime.date, for_salary_slip:
 		}
 
 	# is used in set query
-	lwp = frappe.get_list("Leave Type", filters={"is_lwp": 1}, pluck="name")
+	employee_gender = frappe.db.get_value("Employee", employee, "gender")
+	lwp = frappe.get_list(
+		"Leave Type",
+		filters={"is_lwp": 1},
+		or_filters=[["applicable_to_gender", "in", ["", employee_gender]]],
+		pluck="name",
+	)
 
 	return {
 		"leave_allocation": leave_allocation,
@@ -1078,8 +1084,12 @@ def get_leave_allocation_records(employee, date, leave_type=None):
 	query = query.groupby(Ledger.employee, Ledger.leave_type)
 
 	allocation_details = query.run(as_dict=True)
+	employee_gender = frappe.db.get_value("Employee", employee, "gender")
 	allocated_leaves = frappe._dict()
 	for d in allocation_details:
+		applicable_to_gender = frappe.db.get_value("Leave Type", d.leave_type, "applicable_to_gender")
+		if applicable_to_gender and applicable_to_gender != employee_gender:
+			continue
 		allocated_leaves.setdefault(
 			d.leave_type,
 			frappe._dict(

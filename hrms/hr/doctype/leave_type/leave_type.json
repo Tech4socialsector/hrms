@@ -12,6 +12,7 @@
   "max_leaves_allowed",
   "applicable_after",
   "max_continuous_days_allowed",
+  "applicable_to_gender",
   "column_break_3",
   "is_carry_forward",
   "is_lwp",
@@ -67,6 +68,14 @@
    "label": "Maximum Consecutive Leaves Allowed",
    "oldfieldname": "max_days_allowed",
    "oldfieldtype": "Data"
+  },
+  {
+   "description": "If set, this leave type will only be available to employees of the selected gender. Leave blank to make it applicable to all.",
+   "fieldname": "applicable_to_gender",
+   "fieldtype": "Link",
+   "label": "Applicable to Gender",
+   "options": "Gender",
+   "reqd": 1
   },
   {
    "fieldname": "column_break_3",
@@ -235,7 +244,7 @@
  "icon": "fa fa-flag",
  "idx": 1,
  "links": [],
- "modified": "2026-05-07 18:26:27.583525",
+ "modified": "2026-08-05 10:27:29.352484",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Leave Type",
@@ -269,6 +278,7 @@
    "role": "Employee"
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "creation",
  "sort_order": "DESC",
  "states": [],
