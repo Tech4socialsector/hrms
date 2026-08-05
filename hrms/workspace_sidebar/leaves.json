@@ -79,6 +79,30 @@
    "type": "Link"
   },
   {
+   "child": 1,
+   "collapsible": 1,
+   "icon": "notepad-text-dashed",
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "Leave Adjustment",
+   "link_to": "Leave Adjustment",
+   "link_type": "DocType",
+   "show_arrow": 0,
+   "type": "Link"
+  },
+  {
+   "child": 1,
+   "collapsible": 1,
+   "icon": "book-user",
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "Employee List",
+   "link_to": "Employee",
+   "link_type": "DocType",
+   "show_arrow": 0,
+   "type": "Link"
+  },
+  {
    "child": 0,
    "collapsible": 1,
    "icon": "notepad-text",
@@ -232,7 +256,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-07-28 12:14:36.159514",
+ "modified": "2026-08-05 12:20:36.814692",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Leaves",
