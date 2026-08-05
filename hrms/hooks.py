@@ -7,14 +7,14 @@ app_license = "GNU General Public License (v3)"
 required_apps = ["frappe/erpnext"]
 source_link = "http://github.com/frappe/app/hr-setup"
 app_logo_url = "/assets/app/hr-setup/manifest/manifest-icon-512.maskable.png"
-app_home = "/app/hr-setup"
+app_home = "/app/leaves"
 
 add_to_apps_screen = [
 	{
 		"name": "hrms",
 		"logo": "/assets/app/hr-setup/manifest/manifest-icon-512.maskable.png",
 		"title": "Pathways",
-		"route": "/app/hr-setup",
+		"route": "/app/leaves",
 		"has_permission": "hrms.hr.utils.check_app_permission",
 	}
 ]
