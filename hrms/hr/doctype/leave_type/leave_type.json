@@ -39,7 +39,9 @@
   "rounding",
   "joining_month_proration_section",
   "prorate_joining_month",
-  "joining_month_proration_rules"
+  "joining_month_proration_rules",
+  "fallback_section",
+  "fallback_leave_type"
  ],
  "fields": [
   {
@@ -256,12 +258,25 @@
    "label": "Joining Month Proration Rules",
    "mandatory_depends_on": "eval:doc.prorate_joining_month",
    "options": "Leave Type Proration Rule"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "fallback_section",
+   "fieldtype": "Section Break",
+   "label": "Fallback Leave Type"
+  },
+  {
+   "description": "If an employee applies for this leave type and does not have enough balance, the application will automatically be applied under this leave type instead.",
+   "fieldname": "fallback_leave_type",
+   "fieldtype": "Link",
+   "label": "Use This Leave Type When Exhausted",
+   "options": "Leave Type"
   }
  ],
  "icon": "fa fa-flag",
  "idx": 1,
  "links": [],
- "modified": "2026-08-07 11:24:23.936290",
+ "modified": "2026-08-07 11:32:00.000000",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Leave Type",

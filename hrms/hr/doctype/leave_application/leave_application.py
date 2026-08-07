@@ -104,6 +104,7 @@ class LeaveApplication(Document, PWANotificationsMixin):
 		validate_active_employee(self.employee)
 		set_employee_name(self)
 		self.validate_dates()
+		self.apply_leave_type_fallback()
 		self.validate_balance_leaves()
 		self.validate_leave_overlap()
 		self.validate_max_days()
@@ -422,6 +423,44 @@ class LeaveApplication(Document, PWANotificationsMixin):
 
 		if block_dates and self.status == "Approved":
 			frappe.throw(_("You are not authorized to approve leaves on Block Dates"), LeaveDayBlockedError)
+
+	def apply_leave_type_fallback(self):
+		if not (self.leave_type and self.from_date and self.to_date):
+			return
+
+		fallback_leave_type = frappe.db.get_value("Leave Type", self.leave_type, "fallback_leave_type")
+		if not fallback_leave_type or is_lwp(self.leave_type):
+			return
+
+		total_leave_days = get_number_of_leave_days(
+			self.employee, self.leave_type, self.from_date, self.to_date, self.half_day, self.half_day_date
+		)
+		if total_leave_days <= 0:
+			return
+
+		precision = cint(frappe.db.get_single_value("System Settings", "float_precision")) or 2
+		leave_balance = get_leave_balance_on(
+			self.employee,
+			self.leave_type,
+			self.from_date,
+			self.to_date,
+			consider_all_leaves_in_the_allocation_period=True,
+			for_consumption=True,
+		)
+		leave_balance_for_consumption = flt(leave_balance.get("leave_balance_for_consumption"), precision)
+
+		if leave_balance_for_consumption >= total_leave_days:
+			return
+
+		original_leave_type = self.leave_type
+		self.leave_type = fallback_leave_type
+		frappe.msgprint(
+			_("Insufficient balance in {0}. This application has been applied under {1} instead.").format(
+				frappe.bold(original_leave_type), frappe.bold(fallback_leave_type)
+			),
+			title=_("Leave Type Changed"),
+			indicator="blue",
+		)
 
 	def validate_balance_leaves(self):
 		precision = cint(frappe.db.get_single_value("System Settings", "float_precision")) or 2

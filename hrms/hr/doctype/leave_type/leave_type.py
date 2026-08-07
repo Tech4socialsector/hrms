@@ -26,6 +26,7 @@ class LeaveType(Document):
 		earned_leave_frequency: DF.Literal["Monthly", "Quarterly", "Half-Yearly", "Yearly"]
 		earning_component: DF.Link | None
 		expire_carry_forwarded_leaves_after_days: DF.Int
+		fallback_leave_type: DF.Link | None
 		fraction_of_daily_salary_per_leave: DF.Float
 		include_holiday: DF.Check
 		is_carry_forward: DF.Check
@@ -50,6 +51,7 @@ class LeaveType(Document):
 		self.validate_leave_types()
 		self.validate_allocated_earned_leave()
 		self.validate_joining_month_proration_rules()
+		self.validate_fallback_leave_type()
 
 	def validate_lwp(self):
 		if self.is_lwp:
@@ -133,6 +135,21 @@ class LeaveType(Document):
 				frappe.throw(
 					_("Row #{0}: Joining Day range overlaps with Row #{1}").format(row.idx, prev_row.idx)
 				)
+
+	def validate_fallback_leave_type(self):
+		if not self.fallback_leave_type:
+			return
+
+		if self.fallback_leave_type == self.name:
+			frappe.throw(_("Fallback Leave Type cannot be the same as the Leave Type itself"))
+
+		other_fallback = frappe.db.get_value("Leave Type", self.fallback_leave_type, "fallback_leave_type")
+		if other_fallback == self.name:
+			frappe.throw(
+				_("{0} already falls back to {1}. Fallback Leave Types cannot reference each other.").format(
+					bold(self.fallback_leave_type), bold(self.name)
+				)
+			)
 
 	def clear_cache(self):
 		from hrms.payroll.doctype.salary_slip.salary_slip import LEAVE_TYPE_MAP
