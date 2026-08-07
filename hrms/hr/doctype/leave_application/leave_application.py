@@ -39,6 +39,33 @@ from hrms.utils import get_employee_email
 from hrms.utils.holiday_list import get_holiday_dates_between_range
 
 
+# leave types hidden from a specific gender, matched by Leave Type name
+# all other genders (including unspecified) can see and apply for these leave types
+GENDER_EXCLUDED_LEAVE_TYPES = {
+	"Maternity Leave": "Male",
+}
+
+# leave types visible only to specific designations, matched by Leave Type name
+# employees with any other designation (including unspecified) cannot see these leave types
+DESIGNATION_RESTRICTED_LEAVE_TYPES = {
+	"Special Leave": ["Teacher"],
+}
+
+
+def is_leave_type_applicable_to_employee(
+	leave_type: str, employee_gender: str | None, employee_designation: str | None = None
+) -> bool:
+	excluded_gender = GENDER_EXCLUDED_LEAVE_TYPES.get(leave_type)
+	if excluded_gender and excluded_gender == employee_gender:
+		return False
+
+	allowed_designations = DESIGNATION_RESTRICTED_LEAVE_TYPES.get(leave_type)
+	if allowed_designations and employee_designation not in allowed_designations:
+		return False
+
+	return True
+
+
 class LeaveDayBlockedError(frappe.ValidationError):
 	pass
 
@@ -960,13 +987,14 @@ def get_leave_details(employee: str, date: str | datetime.date, for_salary_slip:
 		}
 
 	# is used in set query
-	employee_gender = frappe.db.get_value("Employee", employee, "gender")
-	lwp = frappe.get_list(
-		"Leave Type",
-		filters={"is_lwp": 1},
-		or_filters=[["applicable_to_gender", "in", ["", employee_gender]]],
-		pluck="name",
+	employee_gender, employee_designation = frappe.db.get_value(
+		"Employee", employee, ["gender", "designation"]
 	)
+	lwp = [
+		d
+		for d in frappe.get_list("Leave Type", filters={"is_lwp": 1}, pluck="name")
+		if is_leave_type_applicable_to_employee(d, employee_gender, employee_designation)
+	]
 
 	return {
 		"leave_allocation": leave_allocation,
@@ -1084,11 +1112,12 @@ def get_leave_allocation_records(employee, date, leave_type=None):
 	query = query.groupby(Ledger.employee, Ledger.leave_type)
 
 	allocation_details = query.run(as_dict=True)
-	employee_gender = frappe.db.get_value("Employee", employee, "gender")
+	employee_gender, employee_designation = frappe.db.get_value(
+		"Employee", employee, ["gender", "designation"]
+	)
 	allocated_leaves = frappe._dict()
 	for d in allocation_details:
-		applicable_to_gender = frappe.db.get_value("Leave Type", d.leave_type, "applicable_to_gender")
-		if applicable_to_gender and applicable_to_gender != employee_gender:
+		if not is_leave_type_applicable_to_employee(d.leave_type, employee_gender, employee_designation):
 			continue
 		allocated_leaves.setdefault(
 			d.leave_type,
