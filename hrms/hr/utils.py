@@ -13,6 +13,7 @@ from frappe.query_builder.functions import Count
 from frappe.utils import (
 	add_days,
 	add_months,
+	cint,
 	comma_and,
 	cstr,
 	flt,
@@ -417,6 +418,7 @@ def calculate_upcoming_earned_leave(allocation, e_leave_type, date_of_joining):
 		annual_allocation,
 		e_leave_type.earned_leave_frequency,
 		e_leave_type.rounding,
+		leave_type=e_leave_type.name,
 	)
 	return earned_leave
 
@@ -512,6 +514,7 @@ def get_monthly_earned_leave(
 	period_start_date: str | datetime.date | None = None,
 	period_end_date: str | datetime.date | None = None,
 	pro_rated: bool = True,
+	leave_type: str | None = None,
 ):
 	earned_leaves = 0.0
 	divide_by_frequency = {"Yearly": 1, "Half-Yearly": 2, "Quarterly": 4, "Monthly": 12}
@@ -522,6 +525,20 @@ def get_monthly_earned_leave(
 			if not (period_start_date or period_end_date):
 				today_date = frappe.flags.current_date or getdate()
 				period_start_date, period_end_date = get_sub_period_start_and_end(today_date, frequency)
+
+			if leave_type and getdate(date_of_joining) > getdate(period_start_date):
+				from hrms.hr.doctype.leave_policy_assignment.leave_policy_assignment import (
+					get_leaves_from_joining_month_proration_rule,
+				)
+
+				joining_month_leaves = get_leaves_from_joining_month_proration_rule(
+					leave_type, date_of_joining
+				)
+				if joining_month_leaves is not None:
+					# the configured value is the final leave count for the joining month,
+					# it shouldn't go through the proportional calc or rounding below
+					precision = cint(frappe.db.get_single_value("System Settings", "float_precision", cache=True))
+					return flt(joining_month_leaves, precision)
 
 			earned_leaves = calculate_pro_rated_leaves(
 				earned_leaves, date_of_joining, period_start_date, period_end_date, is_earned_leave=True

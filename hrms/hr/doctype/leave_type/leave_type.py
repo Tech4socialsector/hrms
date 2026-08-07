@@ -16,13 +16,13 @@ class LeaveType(Document):
 
 	if TYPE_CHECKING:
 		from frappe.types import DF
+		from hrms.hr.doctype.leave_type_proration_rule.leave_type_proration_rule import LeaveTypeProrationRule
 
 		allocate_on_day: DF.Literal["First Day", "Last Day", "Date of Joining"]
 		allow_encashment: DF.Check
 		allow_negative: DF.Check
 		allow_over_allocation: DF.Check
 		applicable_after: DF.Int
-		applicable_to_gender: DF.Link | None
 		earned_leave_frequency: DF.Literal["Monthly", "Quarterly", "Half-Yearly", "Yearly"]
 		earning_component: DF.Link | None
 		expire_carry_forwarded_leaves_after_days: DF.Int
@@ -34,12 +34,14 @@ class LeaveType(Document):
 		is_lwp: DF.Check
 		is_optional_leave: DF.Check
 		is_ppl: DF.Check
+		joining_month_proration_rules: DF.Table[LeaveTypeProrationRule]
 		leave_type_name: DF.Data
 		max_continuous_days_allowed: DF.Int
 		max_encashable_leaves: DF.Int
 		max_leaves_allowed: DF.Float
 		maximum_carry_forwarded_leaves: DF.Float
 		non_encashable_leaves: DF.Int
+		prorate_joining_month: DF.Check
 		rounding: DF.Literal["", "1.0", "1.5"]
 	# end: auto-generated types
 
@@ -47,6 +49,7 @@ class LeaveType(Document):
 		self.validate_lwp()
 		self.validate_leave_types()
 		self.validate_allocated_earned_leave()
+		self.validate_joining_month_proration_rules()
 
 	def validate_lwp(self):
 		if self.is_lwp:
@@ -103,6 +106,32 @@ class LeaveType(Document):
 					msg=_(
 						"Reducing maximum leaves allowed after allocation may cause scheduler to allocate incorrect number of earned leaves. Proceed with caution."
 					),
+				)
+
+	def validate_joining_month_proration_rules(self):
+		if not (self.is_earned_leave and self.prorate_joining_month):
+			return
+
+		if not self.joining_month_proration_rules:
+			frappe.throw(
+				_("Add at least one Joining Month Proration Rule, or disable {0}").format(
+					bold(_("Prorate Joining Month Allocation"))
+				)
+			)
+
+		for row in self.joining_month_proration_rules:
+			if row.day_from > row.day_to:
+				frappe.throw(
+					_("Row #{0}: Joining Day From cannot be greater than Joining Day To").format(row.idx)
+				)
+			if row.day_from < 1 or row.day_to > 31:
+				frappe.throw(_("Row #{0}: Joining Day should be between 1 and 31").format(row.idx))
+
+		sorted_rows = sorted(self.joining_month_proration_rules, key=lambda row: row.day_from)
+		for prev_row, row in zip(sorted_rows, sorted_rows[1:]):
+			if row.day_from <= prev_row.day_to:
+				frappe.throw(
+					_("Row #{0}: Joining Day range overlaps with Row #{1}").format(row.idx, prev_row.idx)
 				)
 
 	def clear_cache(self):

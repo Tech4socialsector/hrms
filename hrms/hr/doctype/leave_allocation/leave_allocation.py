@@ -395,7 +395,9 @@ class LeaveAllocation(Document):
 			],
 		)
 
-		return _get_monthly_earned_leave(doj, annual_allocation, frequency, rounding)
+		return _get_monthly_earned_leave(
+			doj, annual_allocation, frequency, rounding, leave_type=self.leave_type
+		)
 
 	@frappe.whitelist()
 	def create_leave_adjustment(

@@ -272,6 +272,7 @@ class LeavePolicyAssignment(Document):
 				leave_details.rounding,
 				start_date,
 				end_date,
+				leave_type=leave_details.name,
 			)
 			leaves += periodically_earned_leave * (periods_passed - 1)
 		else:
@@ -368,6 +369,7 @@ class LeavePolicyAssignment(Document):
 				leave_details.rounding,
 				pro_rated_period_start,
 				pro_rated_period_end,
+				leave_type=leave_details.name,
 			)
 			schedule[0]["number_of_leaves"] = pro_rated_earned_leave
 		return schedule
@@ -462,6 +464,22 @@ def calculate_pro_rated_leaves(
 	if is_earned_leave:
 		return flt(leaves, precision)
 	return rounded(leaves)
+
+
+def get_leaves_from_joining_month_proration_rule(leave_type, date_of_joining):
+	"""Returns the leaves to credit for the joining month as configured on the Leave Type's
+	Joining Month Proration Rules, based on the employee's Date of Joining. Returns None if
+	proration is not enabled or no rule matches the Date of Joining."""
+	leave_type_doc = frappe.get_cached_doc("Leave Type", leave_type)
+	if not leave_type_doc.prorate_joining_month:
+		return None
+
+	doj_day = getdate(date_of_joining).day
+	for rule in leave_type_doc.joining_month_proration_rules:
+		if rule.day_from <= doj_day <= rule.day_to:
+			return rule.leaves_to_credit
+
+	return None
 
 
 @frappe.whitelist()
