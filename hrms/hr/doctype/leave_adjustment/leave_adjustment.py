@@ -7,6 +7,7 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import cint, flt, get_link_to_form
 
+import hrms
 from hrms.hr.doctype.leave_application.leave_application import get_leave_balance_on
 from hrms.hr.doctype.leave_ledger_entry.leave_ledger_entry import create_leave_ledger_entry
 
@@ -81,9 +82,16 @@ class LeaveAdjustment(Document):
 
 	def on_submit(self):
 		self.create_leave_ledger_entry(submit=True)
+		self.publish_update()
 
 	def on_cancel(self):
 		self.create_leave_ledger_entry(submit=False)
+		self.publish_update()
+
+	def publish_update(self):
+		employee_user = frappe.db.get_value("Employee", self.employee, "user_id", cache=True)
+		hrms.refetch_resource("hrms:my_leaves", employee_user)
+		hrms.refetch_resource("hrms:leave_adjustments", employee_user)
 
 	def create_leave_ledger_entry(self, submit):
 		is_lwp = frappe.db.get_value("Leave Type", self.leave_type, "is_lwp")
