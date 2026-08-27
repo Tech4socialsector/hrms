@@ -39,28 +39,22 @@ from hrms.utils import get_employee_email
 from hrms.utils.holiday_list import get_holiday_dates_between_range
 
 
-# leave types hidden from a specific gender, matched by Leave Type name
-# all other genders (including unspecified) can see and apply for these leave types
-GENDER_EXCLUDED_LEAVE_TYPES = {
-	"Maternity Leave": "Male",
-}
-
-# leave types visible only to specific designations, matched by Leave Type name
-# employees with any other designation (including unspecified) cannot see these leave types
-DESIGNATION_RESTRICTED_LEAVE_TYPES = {
-	"Special Leave": ["Teacher"],
-}
-
-
 def is_leave_type_applicable_to_employee(
 	leave_type: str, employee_gender: str | None, employee_designation: str | None = None
 ) -> bool:
-	excluded_gender = GENDER_EXCLUDED_LEAVE_TYPES.get(leave_type)
-	if excluded_gender and excluded_gender == employee_gender:
+	"""A Leave Type restricted to a set of Genders and/or Designations (configured on the
+	Leave Type itself) is only applicable to employees matching those restrictions.
+	An empty restriction means the Leave Type is applicable to everyone."""
+	applicable_genders = frappe.get_all(
+		"Leave Type Applicable Gender", filters={"parent": leave_type}, pluck="gender"
+	)
+	if applicable_genders and employee_gender not in applicable_genders:
 		return False
 
-	allowed_designations = DESIGNATION_RESTRICTED_LEAVE_TYPES.get(leave_type)
-	if allowed_designations and employee_designation not in allowed_designations:
+	applicable_designations = frappe.get_all(
+		"Leave Type Applicable Designation", filters={"parent": leave_type}, pluck="designation"
+	)
+	if applicable_designations and employee_designation not in applicable_designations:
 		return False
 
 	return True
@@ -103,6 +97,7 @@ class LeaveApplication(Document, PWANotificationsMixin):
 	def validate(self):
 		validate_active_employee(self.employee)
 		set_employee_name(self)
+		self.validate_leave_type_applicable_to_employee()
 		self.validate_dates()
 		self.apply_leave_type_fallback()
 		self.validate_balance_leaves()
@@ -117,6 +112,17 @@ class LeaveApplication(Document, PWANotificationsMixin):
 			self.validate_optional_leave()
 		self.validate_applicable_after()
 		self.validate_for_self_approval()
+
+	def validate_leave_type_applicable_to_employee(self):
+		employee_gender, employee_designation = frappe.db.get_value(
+			"Employee", self.employee, ["gender", "designation"]
+		)
+		if not is_leave_type_applicable_to_employee(self.leave_type, employee_gender, employee_designation):
+			frappe.throw(
+				_("Leave Type {0} is not applicable to employee {1}").format(
+					frappe.bold(self.leave_type), frappe.bold(self.employee)
+				)
+			)
 
 	def on_update(self):
 		if self.status == "Open" and self.docstatus < 1:

@@ -22,6 +22,10 @@
   "allow_over_allocation",
   "include_holiday",
   "is_compensatory",
+  "restrict_applicability_section",
+  "applicable_to_genders",
+  "column_break_restrict",
+  "applicable_to_designations",
   "carry_forward_section",
   "maximum_carry_forwarded_leaves",
   "expire_carry_forwarded_leaves_after_days",
@@ -117,6 +121,31 @@
    "fieldname": "is_compensatory",
    "fieldtype": "Check",
    "label": "Is Compensatory"
+  },
+  {
+   "collapsible": 1,
+   "description": "If both Genders and Designations are set, an employee must match both to apply for this Leave Type.",
+   "fieldname": "restrict_applicability_section",
+   "fieldtype": "Section Break",
+   "label": "Restrict Applicability"
+  },
+  {
+   "description": "Only employees with one of these Genders can apply for this Leave Type. Leave empty to allow all.",
+   "fieldname": "applicable_to_genders",
+   "fieldtype": "Table MultiSelect",
+   "label": "Applicable to Genders",
+   "options": "Leave Type Applicable Gender"
+  },
+  {
+   "fieldname": "column_break_restrict",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Only employees with one of these Designations can apply for this Leave Type. Leave empty to allow all.",
+   "fieldname": "applicable_to_designations",
+   "fieldtype": "Table MultiSelect",
+   "label": "Applicable to Designations",
+   "options": "Leave Type Applicable Designation"
   },
   {
    "collapsible": 1,

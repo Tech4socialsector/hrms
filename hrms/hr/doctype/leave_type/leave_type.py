@@ -16,6 +16,12 @@ class LeaveType(Document):
 
 	if TYPE_CHECKING:
 		from frappe.types import DF
+		from hrms.hr.doctype.leave_type_applicable_designation.leave_type_applicable_designation import (
+			LeaveTypeApplicableDesignation,
+		)
+		from hrms.hr.doctype.leave_type_applicable_gender.leave_type_applicable_gender import (
+			LeaveTypeApplicableGender,
+		)
 		from hrms.hr.doctype.leave_type_proration_rule.leave_type_proration_rule import LeaveTypeProrationRule
 
 		allocate_on_day: DF.Literal["First Day", "Last Day", "Date of Joining"]
@@ -23,6 +29,8 @@ class LeaveType(Document):
 		allow_negative: DF.Check
 		allow_over_allocation: DF.Check
 		applicable_after: DF.Int
+		applicable_to_designations: DF.TableMultiSelect[LeaveTypeApplicableDesignation]
+		applicable_to_genders: DF.TableMultiSelect[LeaveTypeApplicableGender]
 		earned_leave_frequency: DF.Literal["Monthly", "Quarterly", "Half-Yearly", "Yearly"]
 		earning_component: DF.Link | None
 		expire_carry_forwarded_leaves_after_days: DF.Int
